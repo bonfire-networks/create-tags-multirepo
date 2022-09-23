@@ -1,18 +1,24 @@
-name: 'Create Tag'
-description: 'Tag a git commit with a semantic version'
-author: 'Nic Cope'
+name: 'Create Tags in multiple repos'
+description: 'Tag the latest git commit in multiple repos with a semantic version'
+author: 'Mayel - adapted from Nic Cope'
 branding:
     icon: git-commit
     color: white
 inputs:
+  repos:
+    description: Repos (otherwise just uses the current repo)
+    required: false
+  owner:
+    description: Repos owner (should be the same for all)
+    required: true
   token:
     description: Github Token
     required: true
   version:
-    description: 'Version (e.g. v0.1.0)'
+    description: Version (e.g. v0.1.0)
     required: true
   message:
-    description: 'Tag message'
+    description: Tag message
     required: true
 runs:
   using: 'node12'
