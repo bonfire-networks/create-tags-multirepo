@@ -25,10 +25,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Create Tag
-        uses: negz/create-tag@v1
+      - name: Create tags in extensions repos
+        uses: bonfire-networks/create-tags-multirepo@v0.5
         with:
-          version: ${{ github.event.inputs.version }}
+          version: ${{ steps.version.outputs.current-version }}
           message: ${{ github.event.inputs.message }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
+          owner: "bonfire-networks"
+          repos: "one,two"
 ```

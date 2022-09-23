@@ -28,16 +28,16 @@ async function run(): Promise<void> {
         per_page: 1
       })
       //   console.log(commits)
-      const commit = data[0]
+      const commit = data[0].sha
 
-      core.info(`Using latest commit #{commit} in ${repo}`)
+      core.info(`Using latest commit ${commit} in ${repo}`)
 
       const tag_rsp = await client.git.createTag({
         repo,
         tag,
         owner,
         message: msg,
-        object: commit.sha,
+        object: commit,
         type: 'commit'
       })
 

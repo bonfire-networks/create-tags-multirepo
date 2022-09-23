@@ -1852,14 +1852,14 @@ function run() {
                     per_page: 1
                 });
                 //   console.log(commits)
-                const commit = data[0];
-                core.info(`Using latest commit #{commit} in ${repo}`);
+                const commit = data[0].sha;
+                core.info(`Using latest commit ${commit} in ${repo}`);
                 const tag_rsp = yield client.git.createTag({
                     repo,
                     tag,
                     owner,
                     message: msg,
-                    object: commit.sha,
+                    object: commit,
                     type: 'commit'
                 });
                 if (tag_rsp.status !== 201) {
