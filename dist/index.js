@@ -1835,22 +1835,23 @@ const semver = __importStar(__webpack_require__(383));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const tag = core.getInput('version');
             const repos = core.getInput('repos').split(',') || github.context.repo;
+            core.info(`Going to tag ${tag} in repos ${repos}`);
             const owner = core.getInput('owner');
             const msg = core.getInput('message');
-            const tag = core.getInput('version');
             if (semver.valid(tag) == null) {
                 core.setFailed(`Tag ${tag} does not appear to be a valid semantic version`);
                 return;
             }
             const client = github.getOctokit(core.getInput('token'));
-            for (var repo in repos) {
+            for (const repo of repos) {
                 const commits = client.rest.repos.listCommits({
                     owner,
                     repo,
                     per_page: 1
                 })[0];
-                console.log(commits);
+                //   console.log(commits)
                 const commit = commits[0];
                 core.info(`Using latest commit #{commit} in ${repo}`);
                 const tag_rsp = yield client.git.createTag({

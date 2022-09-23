@@ -4,12 +4,14 @@ import * as semver from 'semver'
 
 async function run(): Promise<void> {
   try {
+    const tag = core.getInput('version')
+
     const repos = core.getInput('repos').split(',') || github.context.repo
+    core.info(`Going to tag ${tag} in repos ${repos}`)
 
     const owner = core.getInput('owner')
     const msg = core.getInput('message')
 
-    const tag = core.getInput('version')
     if (semver.valid(tag) == null) {
       core.setFailed(
         `Tag ${tag} does not appear to be a valid semantic version`
@@ -19,13 +21,13 @@ async function run(): Promise<void> {
 
     const client = github.getOctokit(core.getInput('token'))
 
-    for (var repo in repos) {
+    for (const repo of repos) {
       const commits = client.rest.repos.listCommits({
         owner,
         repo,
         per_page: 1
       })[0]
-      console.log(commits)
+      //   console.log(commits)
       const commit = commits[0]
 
       core.info(`Using latest commit #{commit} in ${repo}`)
@@ -33,7 +35,7 @@ async function run(): Promise<void> {
       const tag_rsp = await client.git.createTag({
         repo,
         tag,
-        owner: owner,
+        owner,
         message: msg,
         object: commit,
         type: 'commit'
@@ -48,7 +50,7 @@ async function run(): Promise<void> {
 
       const ref_rsp = await client.git.createRef({
         repo,
-        owner: owner,
+        owner,
         ref: `refs/tags/${tag}`,
         sha: tag_rsp.data.sha
       })
