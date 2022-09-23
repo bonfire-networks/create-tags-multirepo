@@ -1846,20 +1846,20 @@ function run() {
             }
             const client = github.getOctokit(core.getInput('token'));
             for (const repo of repos) {
-                const commits = client.rest.repos.listCommits({
+                const { data } = yield client.repos.listCommits({
                     owner,
                     repo,
                     per_page: 1
-                })[0];
+                });
                 //   console.log(commits)
-                const commit = commits[0];
+                const commit = data[0];
                 core.info(`Using latest commit #{commit} in ${repo}`);
                 const tag_rsp = yield client.git.createTag({
                     repo,
                     tag,
-                    owner: owner,
+                    owner,
                     message: msg,
-                    object: commit,
+                    object: commit.sha,
                     type: 'commit'
                 });
                 if (tag_rsp.status !== 201) {
@@ -1868,7 +1868,7 @@ function run() {
                 }
                 const ref_rsp = yield client.git.createRef({
                     repo,
-                    owner: owner,
+                    owner,
                     ref: `refs/tags/${tag}`,
                     sha: tag_rsp.data.sha
                 });

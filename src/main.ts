@@ -22,13 +22,13 @@ async function run(): Promise<void> {
     const client = github.getOctokit(core.getInput('token'))
 
     for (const repo of repos) {
-      const commits = client.rest.repos.listCommits({
+      const {data} = await client.repos.listCommits({
         owner,
         repo,
         per_page: 1
-      })[0]
+      })
       //   console.log(commits)
-      const commit = commits[0]
+      const commit = data[0]
 
       core.info(`Using latest commit #{commit} in ${repo}`)
 
@@ -37,7 +37,7 @@ async function run(): Promise<void> {
         tag,
         owner,
         message: msg,
-        object: commit,
+        object: commit.sha,
         type: 'commit'
       })
 
